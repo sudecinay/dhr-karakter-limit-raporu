@@ -57,7 +57,7 @@ PRINT.write_text(f"""<!DOCTYPE html>
     <div class="stat"><b>100</b>Standart başlık</div>
     <div class="stat"><b>500</b>Standart açıklama</div>
   </div>
-  <div class="note">Doküman Gönder açıklamasında 30 / 500 sayacı var. Aynı formdaki doküman adında ve Yeni Çalışan Ekle sekmelerinde maxlength yok.</div>
+  <div class="note">Doküman Gönder açıklamasında 30 / 500 sayacı var. Aynı formdaki doküman adında ve çalışan ekle/düzenle sekmelerinde maxlength yok.</div>
   <h2>Alan tipi standardı</h2>
   <table>
     <thead><tr><th>Tip</th><th>Limit</th><th>Kural</th></tr></thead>
@@ -65,7 +65,7 @@ PRINT.write_text(f"""<!DOCTYPE html>
       <tr><td>Başlık / ad</td><td>80 veya 100</td><td>Tek satır. Liste ve modal başlıklarını bozmamalı.</td></tr>
       <tr><td>Açıklama / not</td><td>500 (görev/ticket/not: 1000)</td><td>Doküman Gönder’deki 500 sayacı ürün standardı.</td></tr>
       <tr><td>Kod</td><td>20 (seri no: 50)</td><td>Kısa teknik kimlik. Seri numarası ayrı, daha uzun.</td></tr>
-      <tr><td>Adres</td><td>255</td><td>Tek satır açık adres.</td></tr>
+      <tr><td>Adres</td><td>400</td><td>Adres / işyeri. Tek satır açık adres.</td></tr>
       <tr><td>Telefon</td><td>20 (ülke kodu ayrıysa 15)</td><td>Sadece + ve rakam.</td></tr>
       <tr><td>E-posta</td><td>100</td><td>Format: adı@alan.tld.</td></tr>
       <tr><td>Kimlik no</td><td>sabit hane</td><td>TCKN 11, vergi 10, SGK 13, pasaport 15.</td></tr>
