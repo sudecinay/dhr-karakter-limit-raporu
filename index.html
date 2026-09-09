@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DHR karakter limit raporu</title>
+  <style>
+    :root {
+      --bg: #12141c;
+      --panel: #1a1d2b;
+      --line: #2c3348;
+      --text: #e7eaf3;
+      --muted: #9aa3b8;
+      --accent: #2ec4b6;
+      --warn: #e8a54b;
+      --chip: #23283a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); }
+    body {
+      font: 14px/1.45 "Segoe UI", "Noto Sans", sans-serif;
+      padding: 28px 20px 64px;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    h1 { font-size: 26px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.02em; }
+    h2 { font-size: 17px; margin: 28px 0 10px; }
+    .lead { color: var(--muted); margin: 0 0 22px; max-width: 72ch; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .stat b { display: block; font-size: 22px; color: var(--accent); }
+    .stat span { color: var(--muted); font-size: 12px; }
+    .note {
+      background: #2a2418;
+      border: 1px solid #5a4a22;
+      color: #f0d7a6;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin: 0 0 18px;
+    }
+    .types { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+    .types th, .types td, .grid th, .grid td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    .types th, .grid th { color: var(--muted); font-size: 12px; font-weight: 600; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: auto;
+    }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
+    .chip, .copy, input[type="search"] {
+      background: var(--chip);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .chip.on { background: var(--accent); color: #062824; border-color: var(--accent); }
+    input[type="search"] {
+      border-radius: 8px;
+      min-width: 220px;
+      cursor: text;
+    }
+    .grid { width: 100%; min-width: 920px; }
+    .grid tbody tr:hover { background: #22273a; }
+    .limit { color: var(--accent); font-weight: 650; white-space: nowrap; }
+    .copy { border-radius: 6px; font-size: 12px; }
+    .copy:hover { border-color: var(--accent); }
+    .meta { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+    .templates { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .box {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .box p { margin: 8px 0 0; color: var(--muted); }
+    @media (max-width: 800px) {
+      .stats, .templates { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>DHR karakter limit raporu</h1>
+    <p class="lead">
+      Dropdown, tarih ve dosya yükleme hariç. Bug yazarken satırdaki
+      <b>Kopyala</b> ile cümleyi al. Sayaç mevcut Doküman Gönder açıklamasındaki gibi olmalı: n / limit.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><b id="total">0</b><span>Toplam alan</span></div>
+      <div class="stat"><b>100</b><span>Standart başlık</span></div>
+      <div class="stat"><b>500</b><span>Standart açıklama</span></div>
+      <div class="stat"><b id="shown">0</b><span>Listelenen alan</span></div>
+    </div>
+
+    <div class="note">
+      Doküman Gönder açıklamasında 30 / 500 sayacı var. Aynı formdaki doküman adında
+      ve Yeni Çalışan Ekle sekmelerinde maxlength yok. Limit hem yazmayı kesmeli hem kaydı reddetmeli.
+    </div>
+
+    <h2>Alan tipi standardı</h2>
+    <div class="panel">
+      <table class="types">
+        <thead>
+          <tr><th>Tip</th><th>Limit</th><th>Kural</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Başlık / ad</td><td>80 veya 100</td><td>Tek satır. Liste ve modal başlıklarını bozmamalı.</td></tr>
+          <tr><td>Açıklama / not</td><td>500 (görev/ticket/not: 1000)</td><td>Doküman Gönder’deki 500 sayacı ürün standardı.</td></tr>
+          <tr><td>Kod</td><td>20 (seri no: 50)</td><td>Kısa teknik kimlik. Seri numarası ayrı, daha uzun.</td></tr>
+          <tr><td>Adres</td><td>255</td><td>Tek satır açık adres.</td></tr>
+          <tr><td>Telefon</td><td>20 (ülke kodu ayrıysa 15)</td><td>Sadece + ve rakam.</td></tr>
+          <tr><td>E-posta</td><td>100</td><td>Format: adı@alan.tld.</td></tr>
+          <tr><td>Kimlik no</td><td>sabit hane</td><td>TCKN 11, vergi 10, SGK 13, pasaport 15.</td></tr>
+          <tr><td>Tutar</td><td>12+2 hane</td><td>Virgülden sonra 2 basamak. Negatif yok.</td></tr>
+          <tr><td>Sayı</td><td>alana göre 2–6 hane</td><td>Min–max ayrıca yazılmalı.</td></tr>
+          <tr><td>Koordinat</td><td>12 karakter</td><td>Enlem −90…90, boylam −180…180.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Alan bazlı önerilen limitler</h2>
+    <div class="toolbar" id="filters"></div>
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Alan, ekran veya modül ara" />
+    </div>
+    <p class="meta" id="count"></p>
+    <div class="panel">
+      <table class="grid">
+        <thead>
+          <tr>
+            <th>Modül</th><th>Ekran</th><th>Alan</th><th>Tip</th><th>Önerilen limit</th><th>Gerekçe</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <h2>Bug cümlesi şablonu</h2>
+    <div class="templates">
+      <div class="box">
+        <b>Metin alanı</b>
+        <p>[Modül] / [ekran] içindeki [alan] alanında karakter sınırı yok. Beklenen: maxlength = [sayı], sayaç “n / [sayı]”, limit aşınca yazım durmalı ve kayıt gitmemeli.</p>
+      </div>
+      <div class="box">
+        <b>Sayı / tutar / kimlik</b>
+        <p>[Alan] alanında hane / değer sınırı yok. Beklenen: [min]–[max]. TCKN tam 11, vergi tam 10. Negatif ve harf reddedilmeli.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FIELDS = [
+      ["Doküman Yönetimi","Doküman Gönder","Doküman adı","Başlık / ad","100 karakter","Tek satır başlık. Sayaç yok; uzun metin kutuyu taşıyor."],
+      ["Doküman Yönetimi","Doküman Gönder","Açıklama","Açıklama / not","500 karakter","Bu alanda zaten 30/500 sayacı var. Ürün standardı."],
+      ["Doküman Yönetimi","Çalışan talebi","Doküman adı","Başlık / ad","100 karakter","Doküman Gönder ile aynı alan. Limit farklı olmamalı."],
+      ["Doküman Yönetimi","Çalışan talebi","Açıklama","Açıklama / not","500 karakter","Doküman Gönder açıklamasıyla aynı 500."],
+      ["İzin Yönetimi","İzin talebi","Açıklama","Açıklama / not","500 karakter","Kısa gerekçe. 500 ürün standardı."],
+      ["Zimmet Yönetimi","Zimmet","Ekipman miktarı","Sayı","6 hane (1–999.999)","Tam sayı. 0 ve negatif yok."],
+      ["Zimmet Yönetimi","Zimmet","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Zimmet Yönetimi","Ticket aç","Açıklama","Açıklama / not","1000 karakter","Destek kaydı. Sayaç: n / 1000."],
+      ["Görev Yönetimi","Görev oluştur","Başlık","Başlık / ad","100 karakter","Liste ve kartlarda taşmamalı."],
+      ["Görev Yönetimi","Görev oluştur","Açıklama","Açıklama / not","1000 karakter","Görev içeriği daha uzun olur."],
+      ["Ek Mesai Yönetimi","Ek mesai talebi","Açıklama","Açıklama / not","500 karakter","Onay gerekçesi için 500 yeterli."],
+      ["Bordro Yönetimi","Masraf / satıcı","Satıcı","Başlık / ad","100 karakter","Firma / satıcı unvanı."],
+      ["Bordro Yönetimi","Masraf / satıcı","Tutar","Tutar","12+2 hane (0,01–999.999.999,99)","Para alanı. Negatif yok."],
+      ["Bordro Yönetimi","Masraf / satıcı","KDV tutarı","Tutar","12+2 hane (0–999.999.999,99)","Tutar ile aynı format."],
+      ["Bordro Yönetimi","Masraf / satıcı","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Bordro Yönetimi","Masraf raporu","Açıklama","Açıklama / not","500 karakter","Masraf kalemi gerekçesi."],
+      ["Bordro Yönetimi","Avans talebi","Talep edilen tutar","Tutar","12+2 hane (0,01–999.999.999,99)","0 ve boş değer yok."],
+      ["Bordro Yönetimi","Avans talebi","Taksit sayısı","Sayı","2 hane (1–24)","Avans taksiti. 24 ay tavan."],
+      ["Bordro Yönetimi","Avans talebi","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Seyahat Yönetimi","Seyahat talebi","Başlık","Başlık / ad","100 karakter","Liste başlığı. 100 karakter."],
+      ["Seyahat Yönetimi","Seyahat talebi","Şehir","Başlık / ad","80 karakter","Şehir / ilçe adı."],
+      ["Seyahat Yönetimi","Seyahat talebi","Ülke","Başlık / ad","80 karakter","Serbest metin ülke adı."],
+      ["Seyahat Yönetimi","Seyahat talebi","Adres","Adres","255 karakter","Cadde, no, ilçe."],
+      ["Seyahat Yönetimi","Seyahat talebi","Ulaşım notu","Açıklama / not","500 karakter","Uçuş / transfer notu."],
+      ["Seyahat Yönetimi","Seyahat talebi","Muhatap adı","Başlık / ad","80 karakter","Kişi adı-soyadı."],
+      ["Seyahat Yönetimi","Seyahat talebi","Tahmini maliyet","Tutar","12+2 hane (0–999.999.999,99)","Para alanı."],
+      ["Seyahat Yönetimi","Seyahat talebi","Muhatap telefonu","Telefon","20 karakter","E.164: + ve rakam."],
+      ["Seyahat Yönetimi","Seyahat talebi","Talep edilen avans","Tutar","12+2 hane (0–999.999.999,99)","0 = avans yok olabilir."],
+      ["Seyahat Yönetimi","Seyahat talebi","Seyahat amacı","Açıklama / not","250 karakter","Kısa amaç. Uzun metin açıklamaya."],
+      ["Seyahat Yönetimi","Seyahat talebi","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Seyahat Yönetimi","Konaklama gerekli (tik açık)","Otel / konaklama yeri","Başlık / ad","150 karakter","Otel adı + şube."],
+      ["Seyahat Yönetimi","Konaklama gerekli (tik açık)","Konaklama notu","Açıklama / not","500 karakter","Check-in, oda tipi."],
+      ["Vardiya Yönetimi","Vardiya şablonu","Kod","Kod","20 karakter","Harf, rakam, tire. Boşluk yok."],
+      ["Vardiya Yönetimi","Vardiya şablonu","Ad","Başlık / ad","80 karakter","Şablon görünen adı."],
+      ["Vardiya Yönetimi","Vardiya şablonu","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Vardiya Yönetimi","Vardiya şablonu","Ücretli mola (dk)","Sayı","3 hane (0–240)","Dakika. Ondalık yok."],
+      ["Vardiya Yönetimi","Vardiya şablonu","Ücretsiz mola (dk)","Sayı","3 hane (0–240)","Ücretli mola ile aynı kural."],
+      ["Vardiya Yönetimi","Yeni rotasyon","Rotasyon adı","Başlık / ad","80 karakter","Görünen ad."],
+      ["Vardiya Yönetimi","Yeni rotasyon","Kod","Kod","20 karakter","Şablon kodu ile aynı 20."],
+      ["Vardiya Yönetimi","Yeni rotasyon","Döngü uzunluğu","Sayı","2 hane (1–31)","Gün cinsinden döngü."],
+      ["Vardiya Yönetimi","Yeni rota","Kod","Kod","20 karakter","Kısa rota kodu."],
+      ["Vardiya Yönetimi","Yeni rota","Ad","Başlık / ad","80 karakter","Rota görünen adı."],
+      ["Vardiya Yönetimi","Yeni rota","Durak adı","Başlık / ad","80 karakter","Durak / lokasyon adı."],
+      ["Vardiya Yönetimi","Yeni rota","Enlem","Koordinat","12 karakter (−90 ile 90)","Örnek: 41.008238."],
+      ["Vardiya Yönetimi","Yeni rota","Boylam","Koordinat","12 karakter (−180 ile 180)","Örnek: 28.978359."],
+      ["Bütçe Planlama","Bütçe oluştur","Bütçe adı","Başlık / ad","100 karakter","Tek satır ad."],
+      ["Bütçe Planlama","Bütçe oluştur","Yıl","Sayı","4 hane (2000–2099)","Sadece 4 haneli yıl."],
+      ["Bütçe Planlama","Bütçe oluştur","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Stok Yönetimi","Ürün oluştur","Marka","Başlık / ad","80 karakter","Marka adı."],
+      ["Stok Yönetimi","Ürün oluştur","Model","Başlık / ad","80 karakter","Model kodu / adı."],
+      ["Stok Yönetimi","Ürün oluştur","Seri numarası","Kod","50 karakter","IMEI 15, endüstriyel seri daha uzun."],
+      ["Stok Yönetimi","Ürün oluştur","Maliyet","Tutar","12+2 hane (0–999.999.999,99)","Para alanı."],
+      ["Stok Yönetimi","Ürün oluştur","Açıklama","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Stok Yönetimi","Kategoriler","Kategori adı","Başlık / ad","80 karakter","Kısa kategori etiketi."],
+      ["Stok Yönetimi","Kategoriler","Ay bazından","Sayı","3 hane (1–120)","Ay sayısı. 10 yıl tavan."],
+      ["Stok Yönetimi","Kategoriler","Boşta bekleme uyarısı","Sayı","4 hane (1–3650)","Gün cinsinden uyarı eşiği."],
+      ["Stok Yönetimi","Kategoriler","Ürün ömrü","Sayı","4 hane (1–1200)","Ay cinsinden ömür."],
+      ["Stok Yönetimi","Paket ekle","Paket adı","Başlık / ad","80 karakter","Paket görünen adı."],
+      ["Stok Yönetimi","Paket ekle","Miktar","Sayı","6 hane (1–999.999)","Paket içi adet."],
+      ["Yeni Çalışan Ekle","Temel Bilgiler","Çalışan numarası","Kod","20 karakter","Sicil / personel no."],
+      ["Yeni Çalışan Ekle","Temel Bilgiler","Ad","Başlık / ad","50 karakter","Çift isim sığar."],
+      ["Yeni Çalışan Ekle","Temel Bilgiler","Soyad","Başlık / ad","50 karakter","Çift soyad sığar."],
+      ["Yeni Çalışan Ekle","Temel Bilgiler","E-posta","E-posta","100 karakter","Format: adı@alan.tld."],
+      ["Yeni Çalışan Ekle","Temel Bilgiler","Telefon numarası","Telefon","15 hane (ülke kodu hariç)","TR için 10 hane. Uluslararası 15."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Engellilik oranı","Sayı","3 hane (0–100)","Yüzde. 101 ve harf yok."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Çocuk sayısı","Sayı","2 hane (0–20)","Tam sayı."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Uyruk","Başlık / ad","50 karakter","Serbest metin uyruk."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Telefon numarası","Telefon","20 karakter","İkinci telefon. + ve rakam."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Adres","Adres","255 karakter","Açık adres."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Notlar","Açıklama / not","1000 karakter","HR notu. Sayaç: n / 1000."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Doğum yeri","Başlık / ad","80 karakter","İl / ilçe / ülke."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Yakınlık derecesi","Başlık / ad","40 karakter","Anne, eş, kardeş."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Acil durumda aranacak telefon","Telefon","20 karakter","Telefon standardı."],
+      ["Yeni Çalışan Ekle","Kişisel Bilgiler","Acil durumda aranacak kişi","Başlık / ad","80 karakter","Ad soyad."],
+      ["Yeni Çalışan Ekle","İş Bilgileri","Çalışma yeri","Başlık / ad","100 karakter","Şube / lokasyon adı."],
+      ["Yeni Çalışan Ekle","İş Bilgileri","Bağlı olduğu müdürlük","Başlık / ad","100 karakter","Birim / müdürlük adı."],
+      ["Yeni Çalışan Ekle","İş Bilgileri","Görev ünvanı","Başlık / ad","100 karakter","Ünvan metni."],
+      ["Yeni Çalışan Ekle","İş Bilgileri","Bölge","Başlık / ad","80 karakter","Bölge adı."],
+      ["Yeni Çalışan Ekle","İş Bilgileri","Mesleki özet","Açıklama / not","1000 karakter","Kısa özgeçmiş. Sayaç: n / 1000."],
+      ["Yeni Çalışan Ekle","İş Bilgileri","Ayrılma nedeni","Açıklama / not","500 karakter","Ürün standardı açıklama."],
+      ["Yeni Çalışan Ekle","Eğitim Bilgileri","Mezuniyet yılı","Sayı","4 hane (1950–2099)","Sadece yıl."],
+      ["Yeni Çalışan Ekle","Eğitim Bilgileri","Fakülte","Başlık / ad","100 karakter","Fakülte adı."],
+      ["Yeni Çalışan Ekle","Eğitim Bilgileri","Mezun olunan okul","Başlık / ad","150 karakter","Üniversite / lise adı uzun olabilir."],
+      ["Yeni Çalışan Ekle","Eğitim Bilgileri","Bölüm","Başlık / ad","100 karakter","Bölüm / ana dal."],
+      ["Yeni Çalışan Ekle","Yasal Bilgiler","SGK numarası","Kod","13 hane","Sadece rakam. 13 tavan."],
+      ["Yeni Çalışan Ekle","Yasal Bilgiler","Vergi numarası","Kod","10 hane","T.C. vergi kimlik no 10 hane."],
+      ["Yeni Çalışan Ekle","Yasal Bilgiler","Pasaport numarası","Kod","15 karakter","Harf+rakam. ICAO genelde 9."],
+      ["Yeni Çalışan Ekle","Yasal Bilgiler","Kimlik numarası","Kod","11 hane (tam 11)","TCKN tam 11 rakam. 10 veya 12 yok."]
+    ];
+
+    const modules = ["Tümü", ...new Set(FIELDS.map((r) => r[0]))];
+    let current = "Tümü";
+    const filters = document.getElementById("filters");
+    const rowsEl = document.getElementById("rows");
+    const q = document.getElementById("q");
+    document.getElementById("total").textContent = String(FIELDS.length);
+
+    function bugText(r) {
+      return r[0] + " / " + r[1] + " içindeki " + r[2] + " alanında karakter/değer sınırı yok. Beklenen: " + r[4] + ". Sayaç “n / limit” olmalı; limit aşınca yazım durmalı ve kayıt gitmemeli.";
+    }
+
+    function visible() {
+      const query = q.value.trim().toLowerCase();
+      return FIELDS.filter((r) => {
+        if (current !== "Tümü" && r[0] !== current) return false;
+        if (!query) return true;
+        return r.join(" ").toLowerCase().includes(query);
+      });
+    }
+
+    function renderFilters() {
+      filters.innerHTML = "";
+      modules.forEach((name) => {
+        const b = document.createElement("button");
+        b.className = "chip" + (name === current ? " on" : "");
+        b.textContent = name;
+        b.onclick = () => { current = name; render(); };
+        filters.appendChild(b);
+      });
+    }
+
+    function render() {
+      renderFilters();
+      const list = visible();
+      document.getElementById("shown").textContent = String(list.length);
+      document.getElementById("count").textContent = list.length + " alan listeleniyor.";
+      rowsEl.innerHTML = "";
+      list.forEach((r) => {
+        const tr = document.createElement("tr");
+        r.forEach((cell, i) => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          if (i === 4) td.className = "limit";
+          tr.appendChild(td);
+        });
+        const td = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.className = "copy";
+        btn.textContent = "Kopyala";
+        btn.onclick = async () => {
+          await navigator.clipboard.writeText(bugText(r));
+          btn.textContent = "Kopyalandı";
+          setTimeout(() => { btn.textContent = "Kopyala"; }, 1200);
+        };
+        td.appendChild(btn);
+        tr.appendChild(td);
+        rowsEl.appendChild(tr);
+      });
+    }
+
+    q.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>
