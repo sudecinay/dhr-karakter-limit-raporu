@@ -22,7 +22,18 @@
       padding: 28px 20px 64px;
     }
     .wrap { max-width: 1180px; margin: 0 auto; }
-    h1 { font-size: 26px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    h1 { font-size: 26px; font-weight: 650; margin: 0; letter-spacing: -0.02em; }
+    .pdf {
+      color: #062824;
+      background: var(--accent);
+      border: 0;
+      border-radius: 999px;
+      padding: 7px 14px;
+      text-decoration: none;
+      font-weight: 650;
+      font-size: 13px;
+    }
     h2 { font-size: 17px; margin: 28px 0 10px; }
     .lead { color: var(--muted); margin: 0 0 22px; max-width: 72ch; }
     .stats {
@@ -97,7 +108,10 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>DHR karakter limit raporu</h1>
+    <div class="title-row">
+      <h1>DHR karakter limit raporu</h1>
+      <a class="pdf" href="dhr-karakter-limit-raporu.pdf" download>PDF indir</a>
+    </div>
     <p class="lead">
       Dropdown, tarih ve dosya yükleme hariç. Bug yazarken satırdaki
       <b>Kopyala</b> ile cümleyi al. Sayaç mevcut Doküman Gönder açıklamasındaki gibi olmalı: n / limit.

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>DHR karakter limit raporu</title>
+  <style>
+    @page { size: A4 landscape; margin: 10mm; }
+    html, body { margin: 0; background: #fff; color: #1b2130; }
+    body { font: 10px/1.35 "Segoe UI", "Noto Sans", sans-serif; padding: 8px 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    h2 { font-size: 12px; margin: 14px 0 6px; }
+    .lead, .note { color: #44506a; margin: 0 0 10px; }
+    .note { background: #fff6e5; border: 1px solid #e2c37a; padding: 8px 10px; }
+    .stats { display: flex; gap: 10px; margin: 0 0 10px; }
+    .stat { border: 1px solid #d5dbe7; padding: 6px 10px; min-width: 120px; }
+    .stat b { display: block; font-size: 16px; color: #0f7a70; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #d5dbe7; padding: 4px 6px; text-align: left; vertical-align: top; }
+    th { background: #eef1f7; font-size: 9px; }
+    td:nth-child(5) { font-weight: 700; color: #0f7a70; white-space: nowrap; }
+    .box { border: 1px solid #d5dbe7; padding: 8px; }
+    .templates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  </style>
+</head>
+<body>
+  <h1>DHR karakter limit raporu</h1>
+  <p class="lead">Dropdown, tarih ve dosya yükleme hariç. Limit hem yazmayı kesmeli hem kaydı reddetmeli. Sayaç: n / limit.</p>
+  <div class="stats">
+    <div class="stat"><b>88</b>Toplam alan</div>
+    <div class="stat"><b>100</b>Standart başlık</div>
+    <div class="stat"><b>500</b>Standart açıklama</div>
+  </div>
+  <div class="note">Doküman Gönder açıklamasında 30 / 500 sayacı var. Aynı formdaki doküman adında ve Yeni Çalışan Ekle sekmelerinde maxlength yok.</div>
+  <h2>Alan tipi standardı</h2>
+  <table>
+    <thead><tr><th>Tip</th><th>Limit</th><th>Kural</th></tr></thead>
+    <tbody>
+      <tr><td>Başlık / ad</td><td>80 veya 100</td><td>Tek satır. Liste ve modal başlıklarını bozmamalı.</td></tr>
+      <tr><td>Açıklama / not</td><td>500 (görev/ticket/not: 1000)</td><td>Doküman Gönder’deki 500 sayacı ürün standardı.</td></tr>
+      <tr><td>Kod</td><td>20 (seri no: 50)</td><td>Kısa teknik kimlik. Seri numarası ayrı, daha uzun.</td></tr>
+      <tr><td>Adres</td><td>255</td><td>Tek satır açık adres.</td></tr>
+      <tr><td>Telefon</td><td>20 (ülke kodu ayrıysa 15)</td><td>Sadece + ve rakam.</td></tr>
+      <tr><td>E-posta</td><td>100</td><td>Format: adı@alan.tld.</td></tr>
+      <tr><td>Kimlik no</td><td>sabit hane</td><td>TCKN 11, vergi 10, SGK 13, pasaport 15.</td></tr>
+      <tr><td>Tutar</td><td>12+2 hane</td><td>Virgülden sonra 2 basamak. Negatif yok.</td></tr>
+      <tr><td>Sayı</td><td>alana göre 2–6 hane</td><td>Min–max ayrıca yazılmalı.</td></tr>
+      <tr><td>Koordinat</td><td>12 karakter</td><td>Enlem −90…90, boylam −180…180.</td></tr>
+    </tbody>
+  </table>
+  <h2>Alan bazlı önerilen limitler</h2>
+  <table>
+    <thead>
+      <tr><th>Modül</th><th>Ekran</th><th>Alan</th><th>Tip</th><th>Önerilen limit</th><th>Gerekçe</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Doküman Yönetimi</td><td>Doküman Gönder</td><td>Doküman adı</td><td>Başlık / ad</td><td>100 karakter</td><td>Tek satır başlık. Sayaç yok; uzun metin kutuyu taşıyor.</td></tr>
+<tr><td>Doküman Yönetimi</td><td>Doküman Gönder</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Bu alanda zaten 30/500 sayacı var. Ürün standardı.</td></tr>
+<tr><td>Doküman Yönetimi</td><td>Çalışan talebi</td><td>Doküman adı</td><td>Başlık / ad</td><td>100 karakter</td><td>Doküman Gönder ile aynı alan. Limit farklı olmamalı.</td></tr>
+<tr><td>Doküman Yönetimi</td><td>Çalışan talebi</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Doküman Gönder açıklamasıyla aynı 500.</td></tr>
+<tr><td>İzin Yönetimi</td><td>İzin talebi</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Kısa gerekçe. 500 ürün standardı.</td></tr>
+<tr><td>Zimmet Yönetimi</td><td>Zimmet</td><td>Ekipman miktarı</td><td>Sayı</td><td>6 hane (1–999.999)</td><td>Tam sayı. 0 ve negatif yok.</td></tr>
+<tr><td>Zimmet Yönetimi</td><td>Zimmet</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Zimmet Yönetimi</td><td>Ticket aç</td><td>Açıklama</td><td>Açıklama / not</td><td>1000 karakter</td><td>Destek kaydı. Sayaç: n / 1000.</td></tr>
+<tr><td>Görev Yönetimi</td><td>Görev oluştur</td><td>Başlık</td><td>Başlık / ad</td><td>100 karakter</td><td>Liste ve kartlarda taşmamalı.</td></tr>
+<tr><td>Görev Yönetimi</td><td>Görev oluştur</td><td>Açıklama</td><td>Açıklama / not</td><td>1000 karakter</td><td>Görev içeriği daha uzun olur.</td></tr>
+<tr><td>Ek Mesai Yönetimi</td><td>Ek mesai talebi</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Onay gerekçesi için 500 yeterli.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Masraf / satıcı</td><td>Satıcı</td><td>Başlık / ad</td><td>100 karakter</td><td>Firma / satıcı unvanı.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Masraf / satıcı</td><td>Tutar</td><td>Tutar</td><td>12+2 hane (0,01–999.999.999,99)</td><td>Para alanı. Negatif yok.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Masraf / satıcı</td><td>KDV tutarı</td><td>Tutar</td><td>12+2 hane (0–999.999.999,99)</td><td>Tutar ile aynı format.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Masraf / satıcı</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Masraf raporu</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Masraf kalemi gerekçesi.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Avans talebi</td><td>Talep edilen tutar</td><td>Tutar</td><td>12+2 hane (0,01–999.999.999,99)</td><td>0 ve boş değer yok.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Avans talebi</td><td>Taksit sayısı</td><td>Sayı</td><td>2 hane (1–24)</td><td>Avans taksiti. 24 ay tavan.</td></tr>
+<tr><td>Bordro Yönetimi</td><td>Avans talebi</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Başlık</td><td>Başlık / ad</td><td>100 karakter</td><td>Liste başlığı. 100 karakter.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Şehir</td><td>Başlık / ad</td><td>80 karakter</td><td>Şehir / ilçe adı.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Ülke</td><td>Başlık / ad</td><td>80 karakter</td><td>Serbest metin ülke adı.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Adres</td><td>Adres</td><td>255 karakter</td><td>Cadde, no, ilçe.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Ulaşım notu</td><td>Açıklama / not</td><td>500 karakter</td><td>Uçuş / transfer notu.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Muhatap adı</td><td>Başlık / ad</td><td>80 karakter</td><td>Kişi adı-soyadı.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Tahmini maliyet</td><td>Tutar</td><td>12+2 hane (0–999.999.999,99)</td><td>Para alanı.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Muhatap telefonu</td><td>Telefon</td><td>20 karakter</td><td>E.164: + ve rakam.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Talep edilen avans</td><td>Tutar</td><td>12+2 hane (0–999.999.999,99)</td><td>0 = avans yok olabilir.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Seyahat amacı</td><td>Açıklama / not</td><td>250 karakter</td><td>Kısa amaç. Uzun metin açıklamaya.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Seyahat talebi</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Konaklama gerekli (tik açık)</td><td>Otel / konaklama yeri</td><td>Başlık / ad</td><td>150 karakter</td><td>Otel adı + şube.</td></tr>
+<tr><td>Seyahat Yönetimi</td><td>Konaklama gerekli (tik açık)</td><td>Konaklama notu</td><td>Açıklama / not</td><td>500 karakter</td><td>Check-in, oda tipi.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Vardiya şablonu</td><td>Kod</td><td>Kod</td><td>20 karakter</td><td>Harf, rakam, tire. Boşluk yok.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Vardiya şablonu</td><td>Ad</td><td>Başlık / ad</td><td>80 karakter</td><td>Şablon görünen adı.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Vardiya şablonu</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Vardiya şablonu</td><td>Ücretli mola (dk)</td><td>Sayı</td><td>3 hane (0–240)</td><td>Dakika. Ondalık yok.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Vardiya şablonu</td><td>Ücretsiz mola (dk)</td><td>Sayı</td><td>3 hane (0–240)</td><td>Ücretli mola ile aynı kural.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rotasyon</td><td>Rotasyon adı</td><td>Başlık / ad</td><td>80 karakter</td><td>Görünen ad.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rotasyon</td><td>Kod</td><td>Kod</td><td>20 karakter</td><td>Şablon kodu ile aynı 20.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rotasyon</td><td>Döngü uzunluğu</td><td>Sayı</td><td>2 hane (1–31)</td><td>Gün cinsinden döngü.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rota</td><td>Kod</td><td>Kod</td><td>20 karakter</td><td>Kısa rota kodu.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rota</td><td>Ad</td><td>Başlık / ad</td><td>80 karakter</td><td>Rota görünen adı.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rota</td><td>Durak adı</td><td>Başlık / ad</td><td>80 karakter</td><td>Durak / lokasyon adı.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rota</td><td>Enlem</td><td>Koordinat</td><td>12 karakter (−90 ile 90)</td><td>Örnek: 41.008238.</td></tr>
+<tr><td>Vardiya Yönetimi</td><td>Yeni rota</td><td>Boylam</td><td>Koordinat</td><td>12 karakter (−180 ile 180)</td><td>Örnek: 28.978359.</td></tr>
+<tr><td>Bütçe Planlama</td><td>Bütçe oluştur</td><td>Bütçe adı</td><td>Başlık / ad</td><td>100 karakter</td><td>Tek satır ad.</td></tr>
+<tr><td>Bütçe Planlama</td><td>Bütçe oluştur</td><td>Yıl</td><td>Sayı</td><td>4 hane (2000–2099)</td><td>Sadece 4 haneli yıl.</td></tr>
+<tr><td>Bütçe Planlama</td><td>Bütçe oluştur</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Ürün oluştur</td><td>Marka</td><td>Başlık / ad</td><td>80 karakter</td><td>Marka adı.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Ürün oluştur</td><td>Model</td><td>Başlık / ad</td><td>80 karakter</td><td>Model kodu / adı.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Ürün oluştur</td><td>Seri numarası</td><td>Kod</td><td>50 karakter</td><td>IMEI 15, endüstriyel seri daha uzun.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Ürün oluştur</td><td>Maliyet</td><td>Tutar</td><td>12+2 hane (0–999.999.999,99)</td><td>Para alanı.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Ürün oluştur</td><td>Açıklama</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Kategoriler</td><td>Kategori adı</td><td>Başlık / ad</td><td>80 karakter</td><td>Kısa kategori etiketi.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Kategoriler</td><td>Ay bazından</td><td>Sayı</td><td>3 hane (1–120)</td><td>Ay sayısı. 10 yıl tavan.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Kategoriler</td><td>Boşta bekleme uyarısı</td><td>Sayı</td><td>4 hane (1–3650)</td><td>Gün cinsinden uyarı eşiği.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Kategoriler</td><td>Ürün ömrü</td><td>Sayı</td><td>4 hane (1–1200)</td><td>Ay cinsinden ömür.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Paket ekle</td><td>Paket adı</td><td>Başlık / ad</td><td>80 karakter</td><td>Paket görünen adı.</td></tr>
+<tr><td>Stok Yönetimi</td><td>Paket ekle</td><td>Miktar</td><td>Sayı</td><td>6 hane (1–999.999)</td><td>Paket içi adet.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Temel Bilgiler</td><td>Çalışan numarası</td><td>Kod</td><td>20 karakter</td><td>Sicil / personel no.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Temel Bilgiler</td><td>Ad</td><td>Başlık / ad</td><td>50 karakter</td><td>Çift isim sığar.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Temel Bilgiler</td><td>Soyad</td><td>Başlık / ad</td><td>50 karakter</td><td>Çift soyad sığar.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Temel Bilgiler</td><td>E-posta</td><td>E-posta</td><td>100 karakter</td><td>Format: adı@alan.tld.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Temel Bilgiler</td><td>Telefon numarası</td><td>Telefon</td><td>15 hane (ülke kodu hariç)</td><td>TR için 10 hane. Uluslararası 15.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Engellilik oranı</td><td>Sayı</td><td>3 hane (0–100)</td><td>Yüzde. 101 ve harf yok.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Çocuk sayısı</td><td>Sayı</td><td>2 hane (0–20)</td><td>Tam sayı.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Uyruk</td><td>Başlık / ad</td><td>50 karakter</td><td>Serbest metin uyruk.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Telefon numarası</td><td>Telefon</td><td>20 karakter</td><td>İkinci telefon. + ve rakam.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Adres</td><td>Adres</td><td>255 karakter</td><td>Açık adres.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Notlar</td><td>Açıklama / not</td><td>1000 karakter</td><td>HR notu. Sayaç: n / 1000.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Doğum yeri</td><td>Başlık / ad</td><td>80 karakter</td><td>İl / ilçe / ülke.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Yakınlık derecesi</td><td>Başlık / ad</td><td>40 karakter</td><td>Anne, eş, kardeş.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Acil durumda aranacak telefon</td><td>Telefon</td><td>20 karakter</td><td>Telefon standardı.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Kişisel Bilgiler</td><td>Acil durumda aranacak kişi</td><td>Başlık / ad</td><td>80 karakter</td><td>Ad soyad.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>İş Bilgileri</td><td>Çalışma yeri</td><td>Başlık / ad</td><td>100 karakter</td><td>Şube / lokasyon adı.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>İş Bilgileri</td><td>Bağlı olduğu müdürlük</td><td>Başlık / ad</td><td>100 karakter</td><td>Birim / müdürlük adı.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>İş Bilgileri</td><td>Görev ünvanı</td><td>Başlık / ad</td><td>100 karakter</td><td>Ünvan metni.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>İş Bilgileri</td><td>Bölge</td><td>Başlık / ad</td><td>80 karakter</td><td>Bölge adı.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>İş Bilgileri</td><td>Mesleki özet</td><td>Açıklama / not</td><td>1000 karakter</td><td>Kısa özgeçmiş. Sayaç: n / 1000.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>İş Bilgileri</td><td>Ayrılma nedeni</td><td>Açıklama / not</td><td>500 karakter</td><td>Ürün standardı açıklama.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Eğitim Bilgileri</td><td>Mezuniyet yılı</td><td>Sayı</td><td>4 hane (1950–2099)</td><td>Sadece yıl.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Eğitim Bilgileri</td><td>Fakülte</td><td>Başlık / ad</td><td>100 karakter</td><td>Fakülte adı.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Eğitim Bilgileri</td><td>Mezun olunan okul</td><td>Başlık / ad</td><td>150 karakter</td><td>Üniversite / lise adı uzun olabilir.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Eğitim Bilgileri</td><td>Bölüm</td><td>Başlık / ad</td><td>100 karakter</td><td>Bölüm / ana dal.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Yasal Bilgiler</td><td>SGK numarası</td><td>Kod</td><td>13 hane</td><td>Sadece rakam. 13 tavan.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Yasal Bilgiler</td><td>Vergi numarası</td><td>Kod</td><td>10 hane</td><td>T.C. vergi kimlik no 10 hane.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Yasal Bilgiler</td><td>Pasaport numarası</td><td>Kod</td><td>15 karakter</td><td>Harf+rakam. ICAO genelde 9.</td></tr>
+<tr><td>Yeni Çalışan Ekle</td><td>Yasal Bilgiler</td><td>Kimlik numarası</td><td>Kod</td><td>11 hane (tam 11)</td><td>TCKN tam 11 rakam. 10 veya 12 yok.</td></tr>
+    </tbody>
+  </table>
+  <h2>Bug cümlesi şablonu</h2>
+  <div class="templates">
+    <div class="box"><b>Metin alanı</b><p>[Modül] / [ekran] içindeki [alan] alanında karakter sınırı yok. Beklenen: maxlength = [sayı], sayaç “n / [sayı]”, limit aşınca yazım durmalı ve kayıt gitmemeli.</p></div>
+    <div class="box"><b>Sayı / tutar / kimlik</b><p>[Alan] alanında hane / değer sınırı yok. Beklenen: [min]–[max]. TCKN tam 11, vergi tam 10. Negatif ve harf reddedilmeli.</p></div>
+  </div>
+</body>
+</html>
